@@ -1,0 +1,13 @@
+.d-flex {
+    display: flex !important;
+}
+.p-absolute {
+    position: absolute !important;
+}
+.bg-sleep {
+    background: url('@/assets/purplenight.jpg') no-repeat center center fixed;
+}
+ion-content { --background: transparent;}
+ion-toolbar {
+    --background: rgba(0, 0, 0, 0.25);
+}
