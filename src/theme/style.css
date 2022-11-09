@@ -1,14 +1,18 @@
 .d-flex {
     display: flex !important;
 }
+.center {
+    justify-content: center !important;
+    align-items: center !important;
+}
 .p-absolute {
     position: absolute !important;
 }
 .p-relative {
     position: relative !important;
 }
-.bg-sleep {
-    background: url('@/assets/purplenight.jpg') no-repeat center center fixed;
+.invisible {
+    opacity: 0;
 }
 ion-content { --background: transparent;}
 ion-toolbar {

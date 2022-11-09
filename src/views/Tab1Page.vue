@@ -1,19 +1,20 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
 import "vue3-circle-progress/dist/circle-progress.css";
 import { useSettingsStore } from '@/stores/settings';
 import { settingsOutline } from 'ionicons/icons';
 import { OvernightSleepData } from '@/structs/overnight-sleep-data';
 import CircleProgress from 'vue3-circle-progress';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/vue';
 
 export default defineComponent({
   name: 'Tab1Page',
-  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonButton, CircleProgress, IonIcon },
+  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonButton, CircleProgress, IonButtons, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent },
   setup() {
     const settingsStore = useSettingsStore();
+    const sleepData = computed(() => settingsStore.overnightSleepData);
     return {
-      settingsStore, settingsOutline
+      settingsStore, sleepData, settingsOutline
     }
   },
   data() {
@@ -24,6 +25,7 @@ export default defineComponent({
       timer: undefined as unknown as number,
       startTime: undefined as unknown as Date,
       endTime: undefined as unknown as Date,
+      scrollPosition: null as unknown as number,
     }
   },
   methods: {
@@ -47,12 +49,16 @@ export default defineComponent({
     },
     stopSleep() {
       this.endTime = new Date();
-      this.settingsStore.addOvernightSleepData(new OvernightSleepData(this.startTime, this.endTime));
+      const data = new OvernightSleepData(this.startTime, this.endTime);
+      this.settingsStore.addOvernightSleepData(data);
       this.state = 0;
       this.seconds = 0;
       clearInterval(this.timer);
-    }
-  }
+    },
+    handleScroll(ev: CustomEvent) {
+      this.scrollPosition = ev.detail.scrollTop;
+      },
+  },
 });
 </script>
 
@@ -60,18 +66,36 @@ export default defineComponent({
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title class="ion-text-center">{{ seconds > 0 ? `Sleeping for ${formatTime(seconds)}` : `Sleep Tracker` }}</ion-title>
+          <ion-buttons slot="secondary">
+      <ion-button>
+        <ion-icon slot="icon-only" :icon="settingsOutline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+        <ion-title>{{ seconds > 0 ? `Sleeping for ${formatTime(seconds)}` : `Sleep Tracker` }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-icon class="p-relative" size="large" :icon="settingsOutline" style="padding:5px;opacity:0.5"></ion-icon>
-    <div class="splash"></div>
-    <ion-content>
+    <div :class="['splash',{'invisible': scrollPosition > 50}]"></div>
+    <ion-content :scroll-events="true" @ionScroll="handleScroll($event)">
       <div class="container">
         <circle-progress class="p-absolute" :size="210" fill-color="#9145B6" empty-color="rgba(63, 59, 108, 0.85)" :percent="60" />
         <circle-progress :is-bg-shadow="true" fill-color="#ffffff" empty-color="rgba(63, 59, 108, 0.7)" :percent="seconds < goal ? Math.floor((seconds/goal) * 100) : 100" />
         <ion-button shape="round" fill="outline" v-if="state == 0" @click="startSleep">Start</ion-button>
         <ion-button color="danger" shape="round" fill="outline" v-if="state == 1" @click="stopSleep">Stop</ion-button>
-        <h2 class="heading p-absolute" style="top:60vh;left:10px">Recent Logs</h2>
+        <div class="p-absolute" style="top:60vh">
+          <h2 class="heading" style="max-width:140px">Recent Logs</h2>
+          <div style="flex-direction: column;">
+            <ion-card v-for="log in sleepData.slice(0, 3)" :key="log.id">
+              <ion-card-header>
+                <ion-card-title>{{ log.dateString() }}</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>{{ log.summaryString() }}</p>
+              </ion-card-content>
+            </ion-card>
+          </div>
+            
+        </div>
+        
       </div>
     </ion-content>
   </ion-page>
@@ -98,6 +122,7 @@ ion-button[shape="round"] {
   height: 100%;
   width: 100%;
   position: absolute;
+  transition: all .4s ease;
   top: 0;
   left: 0;
   z-index: -1;

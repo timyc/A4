@@ -4,13 +4,15 @@ import { StanfordSleepinessData } from '@/structs/stanford-sleepiness-data';
 import { OvernightSleepData } from '@/structs/overnight-sleep-data';
 
 export const useSettingsStore = defineStore("settingsStore", {
-    state: () => ({
-        sleepTime: 8 * 60 * 60, // hours * minutes * seconds
-        age: 18,
-        sleepData: [] as SleepData[],
-        overnightSleepData: [] as OvernightSleepData[],
-        stanfordSleepinessData: [] as StanfordSleepinessData[],
-    }),
+    state: () => {
+        return {
+            sleepTime: 8 * 60 * 60, // hours * minutes * seconds
+            age: 18,
+            sleepData: [] as SleepData[],
+            overnightSleepData: [] as OvernightSleepData[],
+            stanfordSleepinessData: [] as StanfordSleepinessData[],
+        }
+    },
     actions: {
         setAge(age: number) {
             this.age = age;
@@ -27,5 +29,19 @@ export const useSettingsStore = defineStore("settingsStore", {
             this.stanfordSleepinessData.push(sleepData);
         }
     },
-    persist: true,
+    persist: {
+        key: "settingsStore",
+        afterRestore: (ctx) => {
+            // Convert the dates back to Date objects and set the prototype
+            for (const x of ctx.store.$state.overnightSleepData) {
+                x.__proto__ = OvernightSleepData.prototype;
+                x.sleepStart = new Date(x.sleepStart);
+                x.sleepEnd = new Date(x.sleepEnd);
+            }
+            for (const x of ctx.store.$state.sleepData) {
+                x.__proto__ = SleepData.prototype;
+                x.loggedAt = new Date(x.loggedAt);
+            }
+        }
+    },
 });
