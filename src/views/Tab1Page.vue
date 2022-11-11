@@ -5,7 +5,8 @@ import { useSettingsStore } from '@/stores/settings';
 import { settingsOutline } from 'ionicons/icons';
 import { OvernightSleepData } from '@/structs/overnight-sleep-data';
 import CircleProgress from 'vue3-circle-progress';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent, modalController } from '@ionic/vue';
+import SleepSettings from '@/components/SleepSettings.vue';
 
 export default defineComponent({
   name: 'Tab1Page',
@@ -27,6 +28,9 @@ export default defineComponent({
       endTime: undefined as unknown as Date,
       scrollPosition: null as unknown as number,
     }
+  },
+  mounted() {
+    this.goal = this.settingsStore.sleepTime;
   },
   methods: {
     incrementTimer() {
@@ -57,6 +61,21 @@ export default defineComponent({
     },
     handleScroll(ev: CustomEvent) {
       this.scrollPosition = ev.detail.scrollTop;
+    },
+    async openModal() {
+        const modal = await modalController.create({
+          component: SleepSettings,
+        });
+        modal.present();
+
+        const { data, role } = await modal.onWillDismiss();
+
+        if (role === 'confirm') {
+          this.settingsStore.age = data.age;
+          this.settingsStore.sleepTime = data.sleepyTime;
+          this.goal = this.settingsStore.sleepTime;
+          this.state = 0;
+        }
       },
   },
 });
@@ -66,24 +85,28 @@ export default defineComponent({
   <ion-page>
     <ion-header>
       <ion-toolbar>
-          <ion-buttons slot="secondary">
-      <ion-button>
-        <ion-icon slot="icon-only" :icon="settingsOutline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+        <ion-buttons slot="secondary">
+          <ion-button @click="openModal">
+            <ion-icon slot="icon-only" :icon="settingsOutline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
         <ion-title>{{ seconds > 0 ? `Sleeping for ${formatTime(seconds)}` : `Sleep Tracker` }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <div :class="['splash',{'invisible': scrollPosition > 50}]"></div>
+    <div :class="['unsplash', { 'visible': scrollPosition > 50 }]"></div>
+    <div :class="['splash', { 'invisible': scrollPosition > 50 }]"></div>
     <ion-content :scroll-events="true" @ionScroll="handleScroll($event)">
       <div class="container">
-        <circle-progress class="p-absolute" :size="210" fill-color="#9145B6" empty-color="rgba(63, 59, 108, 0.85)" :percent="60" />
-        <circle-progress :is-bg-shadow="true" fill-color="#ffffff" empty-color="rgba(63, 59, 108, 0.7)" :percent="seconds < goal ? Math.floor((seconds/goal) * 100) : 100" />
+        <div style="height:90%" v-if="state == 1">Good Night</div>
+        <circle-progress class="p-absolute" :size="210" fill-color="#9145B6" empty-color="rgba(63, 59, 108, 0.85)"
+          :percent="60" />
+        <circle-progress class="p-absolute" :is-bg-shadow="true" fill-color="#ffffff" empty-color="rgba(63, 59, 108, 0.7)"
+          :percent="seconds < goal ? Math.floor((seconds / goal) * 100) : 100" />
         <ion-button shape="round" fill="outline" v-if="state == 0" @click="startSleep">Start</ion-button>
         <ion-button color="danger" shape="round" fill="outline" v-if="state == 1" @click="stopSleep">Stop</ion-button>
         <div class="p-absolute" style="top:60vh">
-          <h2 class="heading" style="max-width:140px">Recent Logs</h2>
           <div style="flex-direction: column;">
+            <h2 class="heading" style="max-width:140px">Recent Logs</h2>
             <ion-card v-for="log in sleepData.slice(0, 3)" :key="log.id">
               <ion-card-header>
                 <ion-card-title>{{ log.dateString() }}</ion-card-title>
@@ -93,9 +116,9 @@ export default defineComponent({
               </ion-card-content>
             </ion-card>
           </div>
-            
+
         </div>
-        
+
       </div>
     </ion-content>
   </ion-page>
@@ -108,6 +131,7 @@ ion-button[shape="round"] {
   width: 150px;
   position: absolute;
 }
+
 .container {
   height: 100%;
   display: flex;
@@ -115,9 +139,19 @@ ion-button[shape="round"] {
   justify-content: center;
   flex-direction: column;
 }
+
+.unsplash {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background: linear-gradient(#100720, #16213E);
+  transition: all .8s ease;
+  opacity: 0;
+}
+
 .splash {
   background-image: url('@/assets/nightfade.png');
-  background-size: contain;
+  background-size: 100vw 40vh;
   background-repeat: no-repeat;
   height: 100%;
   width: 100%;
@@ -127,5 +161,4 @@ ion-button[shape="round"] {
   left: 0;
   z-index: -1;
 }
-
 </style>

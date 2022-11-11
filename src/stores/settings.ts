@@ -21,12 +21,12 @@ export const useSettingsStore = defineStore("settingsStore", {
             this.sleepTime = sleepTime;
         },
         addOvernightSleepData(sleepData: OvernightSleepData) {
-            this.sleepData.push(sleepData);
-            this.overnightSleepData.push(sleepData);
+            this.sleepData.unshift(sleepData);
+            this.overnightSleepData.unshift(sleepData);
         },
         addStanfordSleepinessData(sleepData: StanfordSleepinessData) {
-            this.sleepData.push(sleepData);
-            this.stanfordSleepinessData.push(sleepData);
+            this.sleepData.unshift(sleepData);
+            this.stanfordSleepinessData.unshift(sleepData);
         }
     },
     persist: {
@@ -37,6 +37,7 @@ export const useSettingsStore = defineStore("settingsStore", {
                 x.__proto__ = OvernightSleepData.prototype;
                 x.sleepStart = new Date(x.sleepStart);
                 x.sleepEnd = new Date(x.sleepEnd);
+                x.loggedAt = new Date(x.loggedAt);
             }
             for (const x of ctx.store.$state.sleepData) {
                 x.__proto__ = SleepData.prototype;

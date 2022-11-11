@@ -5,3 +5,4 @@ declare module '*.vue' {
   export default component
 }
 declare module 'vue3-circle-progress';
+declare module 'vue3-scroll-picker';
