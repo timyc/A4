@@ -3,11 +3,13 @@ import { SleepData } from './sleep-data';
 export class OvernightSleepData extends SleepData {
 	private sleepStart:Date;
 	private sleepEnd:Date;
+	private journal:string;
 
 	constructor(sleepStart:Date, sleepEnd:Date) {
 		super();
 		this.sleepStart = sleepStart;
 		this.sleepEnd = sleepEnd;
+		this.journal = "";
 	}
 
 	summaryString():string {
@@ -19,5 +21,13 @@ export class OvernightSleepData extends SleepData {
 
 	dateString():string {
 		return "Night of " + this.sleepStart.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+	}
+
+	getJournal():string {
+		return this.journal;
+	}
+
+	setJournal(journal:string) {
+		this.journal = journal;
 	}
 }

@@ -17,6 +17,9 @@
 .visible {
     opacity: 1 !important;
 }
+.w-100 {
+    width: 100% !important;
+}
 ion-content { --background: transparent;}
 ion-toolbar {
     --background: rgba(0, 0, 0, 0.25);

@@ -1,21 +1,23 @@
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, ref } from 'vue';
 import "vue3-circle-progress/dist/circle-progress.css";
 import { useSettingsStore } from '@/stores/settings';
 import { settingsOutline } from 'ionicons/icons';
 import { OvernightSleepData } from '@/structs/overnight-sleep-data';
 import CircleProgress from 'vue3-circle-progress';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent, modalController } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonToast, modalController } from '@ionic/vue';
 import SleepSettings from '@/components/SleepSettings.vue';
+import SleepResult from '@/components/SleepResult.vue';
 
 export default defineComponent({
   name: 'Tab1Page',
-  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonButton, CircleProgress, IonButtons, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent },
+  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonButton, CircleProgress, IonButtons, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonToast },
   setup() {
     const settingsStore = useSettingsStore();
-    const sleepData = computed(() => settingsStore.overnightSleepData);
+    const isOpenRef = ref(false);
+    const setOpen = (state: boolean) => isOpenRef.value = state;
     return {
-      settingsStore, sleepData, settingsOutline
+      settingsStore, settingsOutline, setOpen, isOpenRef
     }
   },
   data() {
@@ -51,10 +53,17 @@ export default defineComponent({
       this.state = 1;
       this.incrementTimer();
     },
-    stopSleep() {
+    async stopSleep() {
       this.endTime = new Date();
-      const data = new OvernightSleepData(this.startTime, this.endTime);
-      this.settingsStore.addOvernightSleepData(data);
+      const sleepData = new OvernightSleepData(this.startTime, this.endTime);
+      //this.settingsStore.addOvernightSleepData(data);
+      const modal = await modalController.create({
+        component: SleepResult,
+        componentProps: {
+          sleepObject: sleepData
+        }
+      });
+      modal.present();
       this.state = 0;
       this.seconds = 0;
       clearInterval(this.timer);
@@ -63,20 +72,20 @@ export default defineComponent({
       this.scrollPosition = ev.detail.scrollTop;
     },
     async openModal() {
-        const modal = await modalController.create({
-          component: SleepSettings,
-        });
-        modal.present();
+      const modal = await modalController.create({
+        component: SleepSettings,
+      });
+      modal.present();
 
-        const { data, role } = await modal.onWillDismiss();
+      const { data, role } = await modal.onWillDismiss();
 
-        if (role === 'confirm') {
-          this.settingsStore.age = data.age;
-          this.settingsStore.sleepTime = data.sleepyTime;
-          this.goal = this.settingsStore.sleepTime;
-          this.state = 0;
-        }
-      },
+      if (role === 'confirm') {
+        this.settingsStore.age = data.age;
+        this.settingsStore.sleepTime = data.sleepyTime;
+        this.goal = this.settingsStore.sleepTime;
+        this.state = 0;
+      }
+    },
   },
 });
 </script>
@@ -100,19 +109,21 @@ export default defineComponent({
         <div style="height:90%" v-if="state == 1">Good Night</div>
         <circle-progress class="p-absolute" :size="210" fill-color="#9145B6" empty-color="rgba(63, 59, 108, 0.85)"
           :percent="60" />
-        <circle-progress class="p-absolute" :is-bg-shadow="true" fill-color="#ffffff" empty-color="rgba(63, 59, 108, 0.7)"
-          :percent="seconds < goal ? Math.floor((seconds / goal) * 100) : 100" />
+        <circle-progress class="p-absolute" :is-bg-shadow="true" fill-color="#ffffff"
+          empty-color="rgba(63, 59, 108, 0.7)" :percent="seconds < goal ? Math.floor((seconds / goal) * 100) : 100" />
         <ion-button shape="round" fill="outline" v-if="state == 0" @click="startSleep">Start</ion-button>
         <ion-button color="danger" shape="round" fill="outline" v-if="state == 1" @click="stopSleep">Stop</ion-button>
         <div class="p-absolute" style="top:60vh">
           <div style="flex-direction: column;">
             <h2 class="heading" style="max-width:140px">Recent Logs</h2>
-            <ion-card v-for="log in sleepData.slice(0, 3)" :key="log.id">
+            <ion-card v-for="log, index in settingsStore.overnightSleepData.slice(0, 3)" :key="index">
               <ion-card-header>
                 <ion-card-title>{{ log.dateString() }}</ion-card-title>
               </ion-card-header>
               <ion-card-content>
-                <p>{{ log.summaryString() }}</p>
+                <p>{{ log.getJournal() }}</p>
+                <div>{{ log.summaryString() }}</div>
+                <div @click="settingsStore.deleteOvernightSleepData(log as any); setOpen(true)">Delete</div>
               </ion-card-content>
             </ion-card>
           </div>
@@ -121,6 +132,8 @@ export default defineComponent({
 
       </div>
     </ion-content>
+    <ion-toast :is-open="isOpenRef" @didDismiss="setOpen(false)" message="Hello World!" :duration="1500"
+      @click="settingsStore.restoreOvernightSleepData()"></ion-toast>
   </ion-page>
 </template>
 

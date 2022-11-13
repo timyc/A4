@@ -12,17 +12,20 @@ import {
     IonInput,
     IonRow,
     IonCol,
+    IonDatetime,
+    IonIcon,
     modalController,
 } from '@ionic/vue';
+import { swapHorizontalOutline } from 'ionicons/icons';
 import { useSettingsStore } from '@/stores/settings';
 
 export default defineComponent({
     name: 'SleepSettings',
-    components: { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonItem, IonLabel, IonInput, IonRow, IonCol },
+    components: { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonItem, IonLabel, IonInput, IonRow, IonCol, IonIcon, IonDatetime },
     setup() {
         const settingsStore = useSettingsStore();
         return {
-            settingsStore,
+            settingsStore, swapHorizontalOutline
         }
     },
     data() {
@@ -30,6 +33,7 @@ export default defineComponent({
             age: 0,
             hours: 0,
             minutes: 0,
+            sleepType: 0,
         }
     },
     methods: {
@@ -39,9 +43,14 @@ export default defineComponent({
         confirm() {
             return modalController.dismiss({"age":this.age,"sleepyTime":(this.hours * 3600) + (this.minutes * 60)}, 'confirm');
         },
+        changeSleepType() {
+            this.sleepType = (this.sleepType + 1) % 2;
+            this.settingsStore.sleepType = this.sleepType;
+        }
     },
     mounted() {
         this.age = this.settingsStore.age;
+        this.sleepType = this.settingsStore.sleepType;
         this.hours = Math.floor(this.settingsStore.sleepTime / 3600);
         this.minutes = Math.floor(this.settingsStore.sleepTime % 3600 / 60);
     },
@@ -67,8 +76,8 @@ export default defineComponent({
             <ion-label position="stacked">Your age</ion-label>
             <ion-input type="number" v-model="age" :min="0" :placeholder="settingsStore.age.toString()"></ion-input>
         </ion-item>
-        <h2>Sleeping Time</h2>
-        <ion-row>
+        <h2 class="d-flex">Sleeping Time <ion-icon slot="icon-only" :icon="swapHorizontalOutline" @click="changeSleepType"></ion-icon></h2>
+        <ion-row v-if="sleepType == 0">
             <ion-col>
                 <ion-item>
                     <ion-label position="stacked">Hours</ion-label>
@@ -79,6 +88,13 @@ export default defineComponent({
                 <ion-item>
                     <ion-label position="stacked">Minutes</ion-label>
                     <ion-input type="number" v-model="minutes" :min="0" :max="59"></ion-input>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+        <ion-row v-if="sleepType == 1">
+            <ion-col>
+                <ion-item>
+                    <ion-datetime class="center d-flex w-100" presentation="time"></ion-datetime>
                 </ion-item>
             </ion-col>
         </ion-row>

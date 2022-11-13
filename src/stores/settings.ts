@@ -8,6 +8,10 @@ export const useSettingsStore = defineStore("settingsStore", {
         return {
             sleepTime: 8 * 60 * 60, // hours * minutes * seconds
             age: 18,
+            sleepType: 0,
+            prevDelIndexAll: 0,
+            prevDelIndexOvernight: 0,
+            prevDelSleep: undefined as unknown as OvernightSleepData,
             sleepData: [] as SleepData[],
             overnightSleepData: [] as OvernightSleepData[],
             stanfordSleepinessData: [] as StanfordSleepinessData[],
@@ -27,6 +31,18 @@ export const useSettingsStore = defineStore("settingsStore", {
         addStanfordSleepinessData(sleepData: StanfordSleepinessData) {
             this.sleepData.unshift(sleepData);
             this.stanfordSleepinessData.unshift(sleepData);
+        },
+        deleteOvernightSleepData(sleepData: OvernightSleepData) {
+            this.prevDelSleep = sleepData;
+            this.prevDelIndexAll = this.sleepData.indexOf(sleepData);
+            this.prevDelIndexOvernight = this.overnightSleepData.indexOf(sleepData);
+            this.sleepData.splice(this.prevDelIndexAll, 1);
+            this.overnightSleepData.splice(this.prevDelIndexOvernight, 1);
+        },
+        restoreOvernightSleepData() {
+            console.log("Restored deleted");
+            this.sleepData.splice(this.prevDelIndexAll, 0, this.prevDelSleep);
+            this.overnightSleepData.splice(this.prevDelIndexOvernight, 0, this.prevDelSleep);
         }
     },
     persist: {
