@@ -132,8 +132,12 @@ export default defineComponent({
 
       </div>
     </ion-content>
-    <ion-toast :is-open="isOpenRef" @didDismiss="setOpen(false)" message="Hello World!" :duration="1500"
-      @click="settingsStore.restoreOvernightSleepData()"></ion-toast>
+    <ion-toast :is-open="isOpenRef" @didDismiss="setOpen(false)" :duration="5000"
+      :buttons="[{
+              text: 'Undo Delete',
+              role: 'cancel',
+              handler: () => { settingsStore.restoreOvernightSleepData() }
+            }]"></ion-toast>
   </ion-page>
 </template>
 
