@@ -123,7 +123,7 @@ export default defineComponent({
               <ion-card-content>
                 <p>{{ log.getJournal() }}</p>
                 <div>{{ log.summaryString() }}</div>
-                <div @click="settingsStore.deleteOvernightSleepData(log as any); setOpen(true)">Delete</div>
+                <div class="d-flex j-end text-danger" @click="settingsStore.deleteOvernightSleepData(log as any); setOpen(true)">Delete</div>
               </ion-card-content>
             </ion-card>
           </div>
