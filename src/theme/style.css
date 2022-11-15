@@ -23,6 +23,13 @@
 .j-end {
     justify-content: flex-end !important;
 }
+.container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
 .text-danger {
     color: #dc3545 !important;
 }

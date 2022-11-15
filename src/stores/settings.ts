@@ -59,6 +59,10 @@ export const useSettingsStore = defineStore("settingsStore", {
                 x.__proto__ = SleepData.prototype;
                 x.loggedAt = new Date(x.loggedAt);
             }
+            for (const x of ctx.store.$state.stanfordSleepinessData) {
+                x.__proto__ = StanfordSleepinessData.prototype;
+                x.loggedAt = new Date(x.loggedAt);
+            }
         }
     },
 });

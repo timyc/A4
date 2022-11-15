@@ -149,14 +149,6 @@ ion-button[shape="round"] {
   position: absolute;
 }
 
-.container {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
 .unsplash {
   height: 100%;
   width: 100%;
