@@ -11,7 +11,7 @@ export const useSettingsStore = defineStore("settingsStore", {
             sleepType: 0,
             prevDelIndexAll: 0,
             prevDelIndexOvernight: 0,
-            prevDelSleep: undefined as unknown as OvernightSleepData,
+            prevDelSleep: undefined as unknown as OvernightSleepData | StanfordSleepinessData,
             sleepData: [] as SleepData[],
             overnightSleepData: [] as OvernightSleepData[],
             stanfordSleepinessData: [] as StanfordSleepinessData[],
@@ -39,10 +39,22 @@ export const useSettingsStore = defineStore("settingsStore", {
             this.sleepData.splice(this.prevDelIndexAll, 1);
             this.overnightSleepData.splice(this.prevDelIndexOvernight, 1);
         },
+        deleteStanfordSleepData(sleepData: StanfordSleepinessData) {
+            this.prevDelSleep = sleepData;
+            this.prevDelIndexAll = this.sleepData.indexOf(sleepData);
+            this.prevDelIndexOvernight = this.stanfordSleepinessData.indexOf(sleepData);
+            this.sleepData.splice(this.prevDelIndexAll, 1);
+            this.stanfordSleepinessData.splice(this.prevDelIndexOvernight, 1);
+        },
         restoreOvernightSleepData() {
             console.log("Restored deleted");
             this.sleepData.splice(this.prevDelIndexAll, 0, this.prevDelSleep);
-            this.overnightSleepData.splice(this.prevDelIndexOvernight, 0, this.prevDelSleep);
+            this.overnightSleepData.splice(this.prevDelIndexOvernight, 0, this.prevDelSleep as OvernightSleepData);
+        },
+        restoreStanfordSleepData() {
+            console.log("Restored deleted");
+            this.sleepData.splice(this.prevDelIndexAll, 0, this.prevDelSleep);
+            this.stanfordSleepinessData.splice(this.prevDelIndexOvernight, 0, this.prevDelSleep as StanfordSleepinessData);
         }
     },
     persist: {

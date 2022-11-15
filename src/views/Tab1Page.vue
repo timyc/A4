@@ -114,7 +114,7 @@ export default defineComponent({
         <ion-button shape="round" fill="outline" v-if="state == 0" @click="startSleep">Start</ion-button>
         <ion-button color="danger" shape="round" fill="outline" v-if="state == 1" @click="stopSleep">Stop</ion-button>
         <div class="p-absolute" style="top:60vh">
-          <div style="flex-direction: column;">
+          <div style="flex-direction: column;" v-if="settingsStore.overnightSleepData.length > 0">
             <h2 class="heading" style="max-width:140px">Recent Logs</h2>
             <ion-card v-for="log, index in settingsStore.overnightSleepData.slice(0, 3)" :key="index">
               <ion-card-header>

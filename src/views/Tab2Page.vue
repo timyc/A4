@@ -1,16 +1,18 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent,ref } from 'vue';
 import { StanfordSleepinessData } from '@/structs/stanford-sleepiness-data';
 import { useSettingsStore } from '@/stores/settings';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonSelect, IonSelectOption,IonTextarea,IonButton } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonSelect, IonSelectOption,IonTextarea,IonButton,IonCard,IonCardContent,IonCardHeader,IonCardTitle,IonToast } from '@ionic/vue';
 
 export default defineComponent({
   name: 'Tab2Page',
-  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonList, IonItem, IonSelect, IonSelectOption,IonTextarea,IonButton },
+  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonList, IonItem, IonSelect, IonSelectOption,IonTextarea,IonButton,IonCard,IonCardContent,IonCardHeader,IonCardTitle,IonToast },
   setup() {
     const settingsStore = useSettingsStore();
+    const isOpenRef = ref(false);
+    const setOpen = (state: boolean) => isOpenRef.value = state;
     return {
-      settingsStore, StanfordSleepinessData
+      settingsStore, StanfordSleepinessData,setOpen, isOpenRef
     }
   },
   data() {
@@ -41,10 +43,10 @@ export default defineComponent({
         <ion-title>Sleepiness Logger</ion-title>
       </ion-toolbar>
     </ion-header>
-    <div :class="['unsplash', { 'visible': scrollPosition > 50 }]"></div>
-    <div :class="['splash', { 'invisible': scrollPosition > 50 }]"></div>
+    <div :class="['unsplash', { 'visible': scrollPosition > 30 }]"></div>
+    <div :class="['splash', { 'invisible': scrollPosition > 30 }]"></div>
     <ion-content :scroll-events="true" @ionScroll="handleScroll($event)">
-      <div class="container" style="margin-top:150px">
+      <div class="container" style="margin-top:200px">
         <ion-list>
           <h2>Sleepiness</h2>
           <ion-item>
@@ -57,19 +59,19 @@ export default defineComponent({
             <ion-textarea v-model="story" placeholder="Any other thoughts?" :autoGrow="true"></ion-textarea>
         </ion-item>
         <div class="d-flex center">
-          <ion-button @click="submit">Submit</ion-button>
+          <ion-button color="warning" @click="submit">Submit</ion-button>
         </div>
-        <div style="width:90vw">
-          <h2 class="heading" style="max-width:140px">Recent Logs</h2>
-          <div class="d-flex" style="flex-direction:row">
-            <ion-card style="max-width:50%" v-for="log, index in settingsStore.stanfordSleepinessData.slice(0, 2)" :key="index">
+        <div style="width:90vw" v-if="settingsStore.stanfordSleepinessData.length > 0">
+          <h2 class="heading2" style="max-width:160px">Recent Entries</h2>
+          <div class="d-flex" style="flex-direction:column">
+            <ion-card v-for="log, index in settingsStore.stanfordSleepinessData.slice(0, 2)" :key="index">
               <ion-card-header>
                 <ion-card-title>{{ log.dateString() }}</ion-card-title>
               </ion-card-header>
               <ion-card-content>
                 <p>{{ log.getJournal() }}</p>
                 <div>{{ log.summaryString() }}</div>
-                <div class="d-flex j-end text-danger" @click="settingsStore.deleteOvernightSleepData(log as any)">Delete</div>
+                <div class="d-flex j-end text-danger" @click="settingsStore.deleteStanfordSleepData(log as any); setOpen(true)">Delete</div>
               </ion-card-content>
             </ion-card>
           </div>
@@ -81,6 +83,12 @@ export default defineComponent({
       </div>
 
     </ion-content>
+    <ion-toast :is-open="isOpenRef" @didDismiss="setOpen(false)" :duration="5000"
+      :buttons="[{
+              text: 'Undo Delete',
+              role: 'cancel',
+              handler: () => { settingsStore.restoreStanfordSleepData() }
+            }]"></ion-toast>
   </ion-page>
 </template>
 
@@ -95,6 +103,9 @@ ion-item {
   --background: lightgoldenrodyellow !important;
   --color: black !important;
 }
+ion-card-title {
+  --color: black !important;
+}
 .splash {
   background-image: url('@/assets/yellowday.png');
   background-size: 100vw 35vh;
@@ -102,7 +113,7 @@ ion-item {
   height: 100%;
   width: 100%;
   position: absolute;
-  transition: all .4s ease;
+  transition: all .2s ease;
   top: 0;
   left: 0;
   z-index: -1;
