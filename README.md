@@ -16,8 +16,14 @@
 
 
 3. What online resources did you consult when completing this assignment? (list specific URLs)
-
-
+   
+    https://ionicframework.com/docs/api/toast
+    https://ionicframework.com/docs/api/header
+    https://ionicframework.com/docs/api/tabs
+    https://ionicframework.com/docs/api/select-option
+    https://stackoverflow.com/questions/41146350/how-to-set-default-selected-value-of-ion-option
+    https://ionicframework.com/docs/api/select
+    https://ionicframework.com/docs/api/infinite-scroll
 
 4. What classmates or other individuals did you consult as part of this assignment? What did you discuss?
 

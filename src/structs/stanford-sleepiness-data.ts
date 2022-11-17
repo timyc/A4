@@ -15,12 +15,14 @@ export class StanfordSleepinessData extends SleepData {
 
 	private loggedValue:number;
 	private notes:string;
+	public identifier: string;
 
 	constructor(loggedValue:number, loggedAt:Date = new Date(), notes = "") {
 		super();
 		this.loggedValue = loggedValue;
 		this.loggedAt = loggedAt;
 		this.notes = notes;
+		this.identifier = "StanfordSleepinessData";
 	}
 
 	getJournal():string {

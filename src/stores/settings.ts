@@ -68,7 +68,15 @@ export const useSettingsStore = defineStore("settingsStore", {
                 x.loggedAt = new Date(x.loggedAt);
             }
             for (const x of ctx.store.$state.sleepData) {
-                x.__proto__ = SleepData.prototype;
+                if (x.identifier === "OvernightSleepData") {
+                    console.log('OvernightSleepData');
+                    x.__proto__ = OvernightSleepData.prototype;
+                    x.sleepStart = new Date(x.sleepStart);
+                    x.sleepEnd = new Date(x.sleepEnd);
+                } else if (x.identifier === "StanfordSleepinessData") {
+                    console.log('StanfordSleepinessData');
+                    x.__proto__ = StanfordSleepinessData.prototype;
+                }
                 x.loggedAt = new Date(x.loggedAt);
             }
             for (const x of ctx.store.$state.stanfordSleepinessData) {

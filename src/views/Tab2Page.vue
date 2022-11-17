@@ -2,7 +2,8 @@
 import { defineComponent,ref } from 'vue';
 import { StanfordSleepinessData } from '@/structs/stanford-sleepiness-data';
 import { useSettingsStore } from '@/stores/settings';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonSelect, IonSelectOption,IonTextarea,IonButton,IonCard,IonCardContent,IonCardHeader,IonCardTitle,IonToast } from '@ionic/vue';
+import LogInfo from '@/components/LogInfo.vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonSelect, IonSelectOption,IonTextarea,IonButton,IonCard,IonCardContent,IonCardHeader,IonCardTitle,IonToast,modalController } from '@ionic/vue';
 
 export default defineComponent({
   name: 'Tab2Page',
@@ -31,7 +32,16 @@ export default defineComponent({
       this.settingsStore.addStanfordSleepinessData(data);
       this.sleepiness = 0;
       this.story = "";
-    }
+    },
+    async showLog(sleepData: any) {
+      const modal = await modalController.create({
+        component: LogInfo,
+        componentProps: {
+          sleepObject: sleepData
+        }
+      });
+      modal.present();
+    },
   }
 });
 </script>
@@ -46,8 +56,8 @@ export default defineComponent({
     <div :class="['unsplash', { 'visible': scrollPosition > 30 }]"></div>
     <div :class="['splash', { 'invisible': scrollPosition > 30 }]"></div>
     <ion-content :scroll-events="true" @ionScroll="handleScroll($event)">
-      <div class="container" style="margin-top:200px">
-        <ion-list>
+      <div class="container">
+        <ion-list class="p-absolute">
           <h2>Sleepiness</h2>
           <ion-item>
             <ion-select v-model="sleepiness" style="text-overflow:ellipsis;max-width:80vw" interface="action-sheet" placeholder="Select your level of sleepiness">
@@ -61,10 +71,13 @@ export default defineComponent({
         <div class="d-flex center">
           <ion-button color="warning" @click="submit">Submit</ion-button>
         </div>
-        <div style="width:90vw" v-if="settingsStore.stanfordSleepinessData.length > 0">
+        </ion-list>
+        
+        <div class="p-absolute" style="width:90vw;top:60vh">
           <h2 class="heading2" style="max-width:160px">Recent Entries</h2>
+          <div style="color:darkslategray" v-if="settingsStore.stanfordSleepinessData.length == 0">Nothing here yet... get logging!</div>
           <div class="d-flex" style="flex-direction:column">
-            <ion-card v-for="log, index in settingsStore.stanfordSleepinessData.slice(0, 2)" :key="index">
+            <ion-card v-for="log, index in settingsStore.stanfordSleepinessData.slice(0, 2)" :key="index" @click="showLog(log)">
               <ion-card-header>
                 <ion-card-title>{{ log.dateString() }}</ion-card-title>
               </ion-card-header>
@@ -77,9 +90,7 @@ export default defineComponent({
           </div>
           
         </div>
-        
-        
-        </ion-list>
+      
       </div>
 
     </ion-content>
