@@ -77,9 +77,9 @@ export default defineComponent({
           <h2 class="heading2" style="max-width:160px">Recent Entries</h2>
           <div style="color:darkslategray" v-if="settingsStore.stanfordSleepinessData.length == 0">Nothing here yet... get logging!</div>
           <div class="d-flex" style="flex-direction:column">
-            <ion-card v-for="log, index in settingsStore.stanfordSleepinessData.slice(0, 2)" :key="index" @click="showLog(log)">
-              <ion-card-header>
-                <ion-card-title>{{ log.dateString() }}</ion-card-title>
+            <ion-card v-for="log, index in settingsStore.stanfordSleepinessData.slice(0, 2)" :key="index">
+              <ion-card-header @click="showLog(log)">
+                <ion-card-title style="color:royalblue">{{ log.dateString() }}</ion-card-title>
               </ion-card-header>
               <ion-card-content>
                 <p>{{ log.getJournal() }}</p>

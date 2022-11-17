@@ -5,6 +5,7 @@ import { useSettingsStore } from '@/stores/settings';
 import { settingsOutline } from 'ionicons/icons';
 import { OvernightSleepData } from '@/structs/overnight-sleep-data';
 import CircleProgress from 'vue3-circle-progress';
+import LogInfo from '@/components/LogInfo.vue';
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonToast, modalController } from '@ionic/vue';
 import SleepSettings from '@/components/SleepSettings.vue';
 import SleepResult from '@/components/SleepResult.vue';
@@ -68,6 +69,15 @@ export default defineComponent({
       this.seconds = 0;
       clearInterval(this.timer);
     },
+    async showLog(sleepData: any) {
+      const modal = await modalController.create({
+        component: LogInfo,
+        componentProps: {
+          sleepObject: sleepData
+        }
+      });
+      modal.present();
+    },
     handleScroll(ev: CustomEvent) {
       this.scrollPosition = ev.detail.scrollTop;
     },
@@ -117,8 +127,8 @@ export default defineComponent({
           <div style="flex-direction: column;" v-if="settingsStore.overnightSleepData.length > 0">
             <h2 class="heading" style="max-width:140px">Recent Logs</h2>
             <ion-card v-for="log, index in settingsStore.overnightSleepData.slice(0, 3)" :key="index">
-              <ion-card-header>
-                <ion-card-title>{{ log.dateString() }}</ion-card-title>
+              <ion-card-header @click="showLog(log)">
+                <ion-card-title style="color:royalblue">{{ log.dateString() }}</ion-card-title>
               </ion-card-header>
               <ion-card-content>
                 <p>{{ log.getJournal() }}</p>

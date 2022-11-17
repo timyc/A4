@@ -47,12 +47,10 @@ export const useSettingsStore = defineStore("settingsStore", {
             this.stanfordSleepinessData.splice(this.prevDelIndexOvernight, 1);
         },
         restoreOvernightSleepData() {
-            console.log("Restored deleted");
             this.sleepData.splice(this.prevDelIndexAll, 0, this.prevDelSleep);
             this.overnightSleepData.splice(this.prevDelIndexOvernight, 0, this.prevDelSleep as OvernightSleepData);
         },
         restoreStanfordSleepData() {
-            console.log("Restored deleted");
             this.sleepData.splice(this.prevDelIndexAll, 0, this.prevDelSleep);
             this.stanfordSleepinessData.splice(this.prevDelIndexOvernight, 0, this.prevDelSleep as StanfordSleepinessData);
         }
@@ -69,12 +67,10 @@ export const useSettingsStore = defineStore("settingsStore", {
             }
             for (const x of ctx.store.$state.sleepData) {
                 if (x.identifier === "OvernightSleepData") {
-                    console.log('OvernightSleepData');
                     x.__proto__ = OvernightSleepData.prototype;
                     x.sleepStart = new Date(x.sleepStart);
                     x.sleepEnd = new Date(x.sleepEnd);
                 } else if (x.identifier === "StanfordSleepinessData") {
-                    console.log('StanfordSleepinessData');
                     x.__proto__ = StanfordSleepinessData.prototype;
                 }
                 x.loggedAt = new Date(x.loggedAt);

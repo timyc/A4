@@ -1,7 +1,8 @@
 <script lang="ts">
 import { defineComponent, reactive,ref } from 'vue';
 import { useSettingsStore } from '@/stores/settings';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSelect, IonSelectOption, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonItem, IonCard, IonCardContent, IonCardHeader, IonCardTitle } from '@ionic/vue';
+import LogInfo from '@/components/LogInfo.vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSelect, IonSelectOption, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonItem, IonCard, IonCardContent, IonCardHeader, IonCardTitle, modalController } from '@ionic/vue';
 
 export default defineComponent({
   name: 'Tab3Page',
@@ -45,11 +46,19 @@ export default defineComponent({
   },
   methods: {
     refresh(e: any) {
-      console.log(this.selected);
       this.selected = e.detail.value;
       this.items.length = 0;
       this.generateItems();
-    }
+    },
+    async showLog(sleepData: any) {
+      const modal = await modalController.create({
+        component: LogInfo,
+        componentProps: {
+          sleepObject: sleepData
+        }
+      });
+      modal.present();
+    },
   },
   components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonSelect, IonSelectOption, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonItem, IonCard, IonCardContent, IonCardHeader, IonCardTitle },
 });
@@ -69,7 +78,7 @@ export default defineComponent({
         <ion-select-option value="3">Sleepiness Entries</ion-select-option>
       </ion-select>
       <ion-list>
-        <ion-item v-for="item, index in items" :key="index">
+        <ion-item v-for="item, index in items" :key="index" @click="showLog(item)">
           <ion-card>
             <ion-card-header>
               <ion-card-title>{{ item.dateString() }}</ion-card-title>
