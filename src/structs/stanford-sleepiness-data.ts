@@ -29,6 +29,10 @@ export class StanfordSleepinessData extends SleepData {
 		return this.notes;
 	}
 
+	dateString():string {
+		return `${this.loggedAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} at ${this.loggedAt.toLocaleTimeString()}`;
+	}
+
 	summaryString():string {
 		return this.loggedValue + ": " + StanfordSleepinessData.ScaleValues[this.loggedValue];
 	}

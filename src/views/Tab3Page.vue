@@ -58,6 +58,12 @@ export default defineComponent({
         }
       });
       modal.present();
+      const { data, role } = await modal.onWillDismiss();
+      data;
+      if (role === 'delete') {
+        this.items.length = 0;
+        this.generateItems();
+      }
     },
   },
   components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonSelect, IonSelectOption, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonItem, IonCard, IonCardContent, IonCardHeader, IonCardTitle },
@@ -78,7 +84,7 @@ export default defineComponent({
         <ion-select-option value="3">Sleepiness Entries</ion-select-option>
       </ion-select>
       <ion-list>
-        <ion-item v-for="item, index in items" :key="index" @click="showLog(item)">
+        <ion-item v-for="item, index in items" :key="index" @click="() => showLog(item)">
           <ion-card>
             <ion-card-header>
               <ion-card-title>{{ item.dateString() }}</ion-card-title>

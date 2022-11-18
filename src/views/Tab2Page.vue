@@ -99,6 +99,8 @@ export default defineComponent({
               text: 'Undo Delete',
               role: 'cancel',
               handler: () => { settingsStore.restoreStanfordSleepData() }
+            },{
+              text: 'Dismiss',
             }]"></ion-toast>
   </ion-page>
 </template>

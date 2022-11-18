@@ -147,6 +147,8 @@ export default defineComponent({
               text: 'Undo Delete',
               role: 'cancel',
               handler: () => { settingsStore.restoreOvernightSleepData() }
+            },{
+              text: 'Dismiss',
             }]"></ion-toast>
   </ion-page>
 </template>
