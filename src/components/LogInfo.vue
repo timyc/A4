@@ -11,18 +11,22 @@ import {
     IonIcon,
     modalController,
 } from '@ionic/vue';
-import { logoFacebook,logoTwitter } from 'ionicons/icons';
+import { callOutline,logoTwitter } from 'ionicons/icons';
 import { OvernightSleepData } from '@/structs/overnight-sleep-data';
 import { useSettingsStore } from '@/stores/settings';
 import { StanfordSleepinessData } from '@/structs/stanford-sleepiness-data';
-
+declare global {
+  interface Window {
+    Bridge: any;
+  }
+}
 export default defineComponent({
     name: 'LogInfo',
     components: { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonItem, IonIcon },
     setup() {
         const settingsStore = useSettingsStore();
         return {
-            settingsStore, logoFacebook,logoTwitter
+            settingsStore, callOutline,logoTwitter
         }
     },
     data() {
@@ -47,6 +51,24 @@ export default defineComponent({
             }
             return modalController.dismiss(null, 'delete');
         },
+        shareTwitter() {
+            if (window.Bridge) {
+                window.Bridge.postMessage(JSON.stringify({command: "tweet"}));
+            } else {
+                if (this.type == 1) {
+                    window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent("I slept for " + (this.sleepObject as OvernightSleepData).summaryString()));
+                } else if (this.type == 2) {
+                    window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent("My sleepiness was " + (this.sleepObject as StanfordSleepinessData).summaryString()));
+                }
+            }
+        },
+        shareContacts() {
+            if (window.Bridge) {
+                window.Bridge.postMessage(JSON.stringify({command: "contacts"}));
+            } else {
+                window.alert("Not supported on this platform");
+            }
+        }
     },
     mounted() {
         if (this.sleepObject instanceof OvernightSleepData) {
@@ -77,13 +99,13 @@ export default defineComponent({
         <ion-item v-if="(sleepObject as any).getJournal() != ''" style="white-space: pre-wrap;padding: 10px">
             {{ (sleepObject as any).getJournal() }}
         </ion-item>
-        <ion-button expand="block" color="tertiary">
-            <ion-icon slot="start" :icon="logoFacebook"></ion-icon>
-            Share to Facebook
-        </ion-button>
-        <ion-button expand="block" color="secondary">
+        <ion-button expand="block" color="secondary" @click="shareTwitter">
             <ion-icon slot="start" :icon="logoTwitter"></ion-icon>
             Share to Twitter
+        </ion-button>
+        <ion-button expand="block" color="tertiary" @click="shareContacts">
+            <ion-icon slot="start" :icon="callOutline"></ion-icon>
+            Share with Contacts
         </ion-button>
     </ion-content>
 </template>
