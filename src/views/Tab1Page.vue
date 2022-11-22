@@ -4,6 +4,7 @@ import "vue3-circle-progress/dist/circle-progress.css";
 import { useSettingsStore } from '@/stores/settings';
 import { settingsOutline } from 'ionicons/icons';
 import { OvernightSleepData } from '@/structs/overnight-sleep-data';
+import { differenceInSeconds } from 'date-fns';
 import CircleProgress from 'vue3-circle-progress';
 import LogInfo from '@/components/LogInfo.vue';
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonToast, modalController } from '@ionic/vue';
@@ -27,6 +28,7 @@ export default defineComponent({
       seconds: 0,
       healthScore: 0,
       goal: 10,
+      data: {},
       timer: undefined as unknown as number,
       startTime: undefined as unknown as Date,
       endTime: undefined as unknown as Date,
@@ -72,6 +74,20 @@ export default defineComponent({
     },
 
     startSleep() {
+      if (this.settingsStore.sleepType == 1) {
+          const wakeTime = (this.data as any).wakeTime.split(":");
+          const nd = new Date(); // now
+          const nd2 = new Date();
+          nd2.setHours(Number(wakeTime[0]), Number(wakeTime[1]), 0, 0);
+          if (nd > nd2) {
+            nd2.setDate(nd2.getDate() + 1);
+            this.goal = differenceInSeconds(nd2, nd);
+          }
+          else {
+            this.goal = differenceInSeconds(nd2, nd);
+          }
+          console.log("Goal:",this.goal);
+        }
       this.startTime = new Date();
       this.state = 1;
       this.incrementTimer();
@@ -117,7 +133,7 @@ export default defineComponent({
       const { data, role } = await modal.onWillDismiss();
 
       if (role === 'confirm') {
-        console.log(data);
+        this.data = data;
         this.settingsStore.age = data.age;
         this.settingsStore.sleepTime = data.sleepyTime;
         this.goal = this.settingsStore.sleepTime;

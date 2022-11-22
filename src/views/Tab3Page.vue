@@ -2,7 +2,8 @@
 import { defineComponent, reactive,ref } from 'vue';
 import { useSettingsStore } from '@/stores/settings';
 import LogInfo from '@/components/LogInfo.vue';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSelect, IonSelectOption, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonItem, IonCard, IonCardContent, IonCardHeader, IonCardTitle, modalController } from '@ionic/vue';
+import { trashOutline } from 'ionicons/icons';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSelect, IonSelectOption, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonItem, IonCard, IonCardContent, IonCardHeader, IonCardTitle, modalController, alertController, IonButtons, IonButton, IonIcon } from '@ionic/vue';
 
 export default defineComponent({
   name: 'Tab3Page',
@@ -39,10 +40,13 @@ export default defineComponent({
       setTimeout(() => ev.target.complete(), 500);
     };
     //generateItems();
-    return { ionInfinite, items, generateItems, selected };
+    return { ionInfinite, items, generateItems, selected, trashOutline, settingsStore };
   },
   mounted() {
     this.generateItems();
+  },
+  updated() {
+    this.refresh({detail: {value: "1"}}); // refresh the list when the page is updated
   },
   methods: {
     refresh(e: any) {
@@ -65,8 +69,34 @@ export default defineComponent({
         this.generateItems();
       }
     },
+    async confirmDelete() {
+      const alert = await alertController.create({
+          header: 'Are you sure you want to delete all data? This action is irreversible!',
+          buttons: [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              handler: () => {
+                console.log('Confirm Cancel');
+              },
+            },
+            {
+              text: 'OK',
+              role: 'confirm',
+              handler: () => {
+                this.settingsStore.overnightSleepData.length = 0;
+                this.settingsStore.sleepData.length = 0;
+                this.settingsStore.stanfordSleepinessData.length = 0;
+                this.refresh({detail: {value: "1"}});
+              },
+            },
+          ],
+        });
+
+        await alert.present();
+    },
   },
-  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonSelect, IonSelectOption, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonItem, IonCard, IonCardContent, IonCardHeader, IonCardTitle },
+  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonSelect, IonSelectOption, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonItem, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonButtons, IonButton, IonIcon },
 });
 </script>
 
@@ -74,6 +104,11 @@ export default defineComponent({
   <ion-page>
     <ion-header>
       <ion-toolbar>
+        <ion-buttons slot="secondary">
+          <ion-button @click="confirmDelete">
+            <ion-icon slot="icon-only" :icon="trashOutline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
         <ion-title>View Logs and Entries</ion-title>
       </ion-toolbar>
     </ion-header>
