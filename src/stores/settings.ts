@@ -36,15 +36,15 @@ export const useSettingsStore = defineStore("settingsStore", {
         },
         deleteOvernightSleepData(sleepData: OvernightSleepData) {
             this.prevDelSleep = sleepData;
-            this.prevDelIndexAll = this.sleepData.indexOf(sleepData);
-            this.prevDelIndexOvernight = this.overnightSleepData.indexOf(sleepData);
+            this.prevDelIndexAll = this.sleepData.map(d => d.id).indexOf(sleepData.id);
+            this.prevDelIndexOvernight = this.overnightSleepData.map(d => d.id).indexOf(sleepData.id);
             this.sleepData.splice(this.prevDelIndexAll, 1);
             this.overnightSleepData.splice(this.prevDelIndexOvernight, 1);
         },
         deleteStanfordSleepData(sleepData: StanfordSleepinessData) {
             this.prevDelSleep = sleepData;
-            this.prevDelIndexAll = this.sleepData.indexOf(sleepData);
-            this.prevDelIndexOvernight = this.stanfordSleepinessData.indexOf(sleepData);
+            this.prevDelIndexAll = this.sleepData.map(d => d.id).indexOf(sleepData.id);
+            this.prevDelIndexOvernight = this.stanfordSleepinessData.map(d => d.id).indexOf(sleepData.id);
             this.sleepData.splice(this.prevDelIndexAll, 1);
             this.stanfordSleepinessData.splice(this.prevDelIndexOvernight, 1);
         },

@@ -27,7 +27,7 @@ export default defineComponent({
     },
     data() {
         return {
-            type: 0, // 0 = sleep, 1 = sleepiness
+            type: 0, // 1 = sleep, 2 = sleepiness
         }
     },
     props: {
