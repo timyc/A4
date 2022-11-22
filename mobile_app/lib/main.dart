@@ -8,9 +8,7 @@ Future<void> main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   runApp(
     MaterialApp(
-      theme: ThemeData.from(colorScheme: ColorScheme.dark()),
-      darkTheme: ThemeData.from(colorScheme: ColorScheme.dark()),
-      themeMode: ThemeMode.dark,
+      theme: ThemeData(scaffoldBackgroundColor: const Color(0xFF000000)),
       home: const WebViewApp(),
     ),
   );
