@@ -53,7 +53,11 @@ export default defineComponent({
         },
         shareTwitter() {
             if (window.Bridge) {
-                window.Bridge.postMessage(JSON.stringify({command: "tweet"}));
+                if (this.type == 1) {
+                    window.Bridge.postMessage(JSON.stringify({command: "tweet1"}));
+                } else if (this.type == 2) {
+                    window.Bridge.postMessage(JSON.stringify({command: "tweet2"}));
+                }
             } else {
                 if (this.type == 1) {
                     window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent("I slept for " + (this.sleepObject as OvernightSleepData).summaryString()));
@@ -64,7 +68,11 @@ export default defineComponent({
         },
         shareContacts() {
             if (window.Bridge) {
-                window.Bridge.postMessage(JSON.stringify({command: "contacts"}));
+                if (this.type == 1) {
+                    window.Bridge.postMessage(JSON.stringify({command: "contact1"}));
+                } else if (this.type == 2) {
+                    window.Bridge.postMessage(JSON.stringify({command: "contact2"}));
+                }
             } else {
                 window.alert("Not supported on this platform");
             }

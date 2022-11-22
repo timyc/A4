@@ -3,7 +3,7 @@ import { defineComponent,ref } from 'vue';
 import { StanfordSleepinessData } from '@/structs/stanford-sleepiness-data';
 import { useSettingsStore } from '@/stores/settings';
 import LogInfo from '@/components/LogInfo.vue';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonSelect, IonSelectOption,IonTextarea,IonButton,IonCard,IonCardContent,IonCardHeader,IonCardTitle,IonToast,modalController } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonSelect, IonSelectOption,IonTextarea,IonButton,IonCard,IonCardContent,IonCardHeader,IonCardTitle,IonToast,modalController,alertController } from '@ionic/vue';
 
 export default defineComponent({
   name: 'Tab2Page',
@@ -28,6 +28,15 @@ export default defineComponent({
       this.scrollPosition = ev.detail.scrollTop;
     },
     async submit() {
+      if (this.sleepiness == 0) {
+        const alert = await alertController.create({
+          header: 'Error',
+          message: 'Please select a sleepiness level.',
+          buttons: ['OK']
+        });
+        await alert.present();
+        return;
+      }
       const data = new StanfordSleepinessData(this.sleepiness, new Date(), this.story);
       this.settingsStore.addStanfordSleepinessData(data);
       this.sleepiness = 0;
