@@ -8,8 +8,10 @@ export const useSettingsStore = defineStore("settingsStore", {
         return {
             sleepTime: 8 * 60 * 60, // hours * minutes * seconds
             age: 18,
-            sleepType: 0,
+            sleepType: 0, // 0 = set time, 1 = alarm
+            isNew: true,
             prevDelIndexAll: 0,
+            wakeUpString: '',
             prevDelIndexOvernight: 0,
             prevDelSleep: undefined as unknown as OvernightSleepData | StanfordSleepinessData,
             sleepData: [] as SleepData[],

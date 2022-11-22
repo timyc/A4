@@ -25,6 +25,7 @@ export default defineComponent({
     return {
       state: 0,
       seconds: 0,
+      healthScore: 0,
       goal: 10,
       timer: undefined as unknown as number,
       startTime: undefined as unknown as Date,
@@ -33,7 +34,13 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.goal = this.settingsStore.sleepTime;
+    if (this.settingsStore.sleepType == 0) {
+      this.goal = this.settingsStore.sleepTime;
+    } else {
+      this.goal = this.settingsStore.sleepTime;
+    }
+    
+    this.updateHealthScore();
   },
   methods: {
     incrementTimer() {
@@ -41,7 +48,22 @@ export default defineComponent({
         this.seconds++;
       }, 1000);
     },
-
+    updateHealthScore() {
+      if (this.settingsStore.overnightSleepData.length == 0) {
+        this.healthScore = 100;
+        return;
+      }
+      this.healthScore = this.settingsStore.overnightSleepData.slice(0, 7).reduce((a, b) => a + b.sleepTime(), 0) / 7;
+      if (this.settingsStore.age < 18) {
+        this.healthScore = (this.healthScore / 252000) * 100;
+      }
+      else if (this.settingsStore.age < 65) {
+        this.healthScore = (this.healthScore / 201600) * 100;
+      }
+      else {
+        this.healthScore = (this.healthScore / 151200) * 100;
+      }
+    },
     formatTime(sec: number): string {
       let hours = Math.floor(sec / 3600);
       let minutes = Math.floor((sec - (hours * 3600)) / 60);
@@ -65,6 +87,11 @@ export default defineComponent({
         }
       });
       modal.present();
+      const { data, role } = await modal.onWillDismiss();
+      data;
+      if (role === 'confirm') {
+        this.updateHealthScore();
+      }
       this.state = 0;
       this.seconds = 0;
       clearInterval(this.timer);
@@ -90,6 +117,7 @@ export default defineComponent({
       const { data, role } = await modal.onWillDismiss();
 
       if (role === 'confirm') {
+        console.log(data);
         this.settingsStore.age = data.age;
         this.settingsStore.sleepTime = data.sleepyTime;
         this.goal = this.settingsStore.sleepTime;
@@ -117,10 +145,11 @@ export default defineComponent({
     <ion-content :scroll-events="true" @ionScroll="handleScroll($event)">
       <div class="container">
         <div style="height:90%" v-if="state == 1">Good Night</div>
+        <div style="height:90%" v-else>Health Score: {{ healthScore.toFixed(2) }}</div>
         <circle-progress class="p-absolute" :size="210" fill-color="#9145B6" empty-color="rgba(63, 59, 108, 0.85)"
-          :percent="60" />
+          :percent="healthScore" />
         <circle-progress class="p-absolute" :is-bg-shadow="true" fill-color="#ffffff"
-          empty-color="rgba(63, 59, 108, 0.7)" :percent="seconds < goal ? Math.floor((seconds / goal) * 100) : 100" />
+          empty-color="rgba(63, 59, 108, 0.7)" :percent="seconds < goal ? ~~((seconds / goal) * 100) : 100" />
         <ion-button shape="round" fill="outline" v-if="state == 0" @click="startSleep">Start</ion-button>
         <ion-button color="danger" shape="round" fill="outline" v-if="state == 1" @click="stopSleep">Stop</ion-button>
         <div class="p-absolute" style="top:60vh">
@@ -131,9 +160,9 @@ export default defineComponent({
                 <ion-card-title style="color:royalblue">{{ log.dateString() }}</ion-card-title>
               </ion-card-header>
               <ion-card-content>
-                <p>{{ log.getJournal() }}</p>
+                <p class="log-preview">{{ log.getJournal() }}</p>
                 <div>{{ log.summaryString() }}</div>
-                <div class="d-flex j-end text-danger" @click="settingsStore.deleteOvernightSleepData(log as any); setOpen(true)">Delete</div>
+                <div class="d-flex j-end text-danger" @click="settingsStore.deleteOvernightSleepData(log as any); setOpen(true);updateHealthScore()">Delete</div>
               </ion-card-content>
             </ion-card>
           </div>
@@ -146,7 +175,7 @@ export default defineComponent({
       :buttons="[{
               text: 'Undo Delete',
               role: 'cancel',
-              handler: () => { settingsStore.restoreOvernightSleepData() }
+              handler: () => { settingsStore.restoreOvernightSleepData();updateHealthScore() }
             },{
               text: 'Dismiss',
             }]"></ion-toast>

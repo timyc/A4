@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { format, parseISO } from 'date-fns';
 import {
     IonContent,
     IonHeader,
@@ -34,6 +35,7 @@ export default defineComponent({
             hours: 0,
             minutes: 0,
             sleepType: 0,
+            wakeTime: '',
         }
     },
     methods: {
@@ -41,11 +43,15 @@ export default defineComponent({
             return modalController.dismiss(null, 'cancel');
         },
         confirm() {
-            return modalController.dismiss({"age":this.age,"sleepyTime":(this.hours * 3600) + (this.minutes * 60)}, 'confirm');
+            this.settingsStore.wakeUpString = this.wakeTime;
+            return modalController.dismiss({"age":this.age,"sleepyTime":(this.hours * 3600) + (this.minutes * 60),"wakeTime":format(parseISO(this.wakeTime), 'HH:mm')}, 'confirm');
         },
         changeSleepType() {
             this.sleepType = (this.sleepType + 1) % 2;
             this.settingsStore.sleepType = this.sleepType;
+            if (this.sleepType == 1) {
+                this.settingsStore.wakeUpString = this.wakeTime;
+            }
         }
     },
     mounted() {
@@ -53,6 +59,7 @@ export default defineComponent({
         this.sleepType = this.settingsStore.sleepType;
         this.hours = Math.floor(this.settingsStore.sleepTime / 3600);
         this.minutes = Math.floor(this.settingsStore.sleepTime % 3600 / 60);
+        this.wakeTime = this.settingsStore.wakeUpString != '' ? this.settingsStore.wakeUpString : new Date().toISOString();
     },
 });
 </script>
@@ -94,7 +101,7 @@ export default defineComponent({
         <ion-row v-if="sleepType == 1">
             <ion-col>
                 <ion-item>
-                    <ion-datetime class="center d-flex w-100" presentation="time"></ion-datetime>
+                    <ion-datetime v-model="wakeTime" :value="wakeTime" class="center d-flex w-100" presentation="time"></ion-datetime>
                 </ion-item>
             </ion-col>
         </ion-row>

@@ -82,7 +82,7 @@ export default defineComponent({
                 <ion-card-title style="color:royalblue">{{ log.dateString() }}</ion-card-title>
               </ion-card-header>
               <ion-card-content>
-                <p>{{ log.getJournal() }}</p>
+                <p class="log-preview">{{ log.getJournal() }}</p>
                 <div>{{ log.summaryString() }}</div>
                 <div class="d-flex j-end text-danger" @click="settingsStore.deleteStanfordSleepData(log as any); setOpen(true)">Delete</div>
               </ion-card-content>

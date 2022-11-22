@@ -32,4 +32,10 @@ export class OvernightSleepData extends SleepData {
 	setJournal(journal:string) {
 		this.journal = journal;
 	}
+
+	sleepTime():number {
+		const sleepStart_ms = this.sleepStart.getTime();
+		const sleepEnd_ms = this.sleepEnd.getTime();
+		return (sleepEnd_ms - sleepStart_ms) / 1000; // seconds
+	}
 }

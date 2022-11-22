@@ -50,3 +50,9 @@ ion-toolbar {
     margin-left:10px;
     padding-bottom: 5px;
 }
+
+.log-preview {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

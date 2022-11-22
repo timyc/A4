@@ -4,16 +4,16 @@
 
 */20
 - 2/2 The ability to log overnight sleep
-- */2 The ability to log sleepiness during the day
-- */2 The ability to view these two categories of logged data
-- */4 Either using a native device resource or backing up logged data
+- 2/2 The ability to log sleepiness during the day
+- 2/2 The ability to view these two categories of logged data
+- 4/4 Either using a native device resource or backing up logged data
 - */4 Following good principles of mobile design
 - */4 Creating a compelling app
 - */2 A readme and demo video which explains how these features were implemented and their design rationale
 
 2. How long, in hours, did it take you to complete this assignment?
 
-
+    10 hours.
 
 3. What online resources did you consult when completing this assignment? (list specific URLs)
    
@@ -24,6 +24,8 @@
     https://stackoverflow.com/questions/41146350/how-to-set-default-selected-value-of-ion-option
     https://ionicframework.com/docs/api/select
     https://ionicframework.com/docs/api/infinite-scroll
+    https://stackoverflow.com/questions/46339827/ionic-3-ion-textarea-line-break-issue
+    https://stackoverflow.com/questions/47173462/get-the-time-difference-between-two-times-in-format-hhmmss
 
 4. What classmates or other individuals did you consult as part of this assignment? What did you discuss?
 

@@ -27,7 +27,7 @@ export default defineComponent({
     },
     data() {
         return {
-            type: 0,
+            type: 0, // 0 = sleep, 1 = sleepiness
         }
     },
     props: {
@@ -39,7 +39,7 @@ export default defineComponent({
         cancel() {
             return modalController.dismiss(null, 'cancel');
         },
-        delte() {
+        delte() { // misspelled on purpose
             if (this.type == 1) {
                 this.settingsStore.deleteOvernightSleepData(this.sleepObject as OvernightSleepData);
             } else if (this.type == 2) {
@@ -74,7 +74,7 @@ export default defineComponent({
     <ion-content class="ion-padding">
         <h2>{{ (sleepObject as any).dateString() }}</h2>
         <span>{{ (sleepObject as any).summaryString() }}</span>
-        <ion-item v-if="(sleepObject as any).getJournal() != ''">
+        <ion-item v-if="(sleepObject as any).getJournal() != ''" style="white-space: pre-wrap;padding: 10px">
             {{ (sleepObject as any).getJournal() }}
         </ion-item>
         <ion-button expand="block" color="tertiary">

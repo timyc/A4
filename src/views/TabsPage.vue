@@ -1,5 +1,28 @@
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
+import Tutorial from '@/components/Tutorial.vue';
+import { useSettingsStore } from '@/stores/settings';
+import { moonOutline, sunnyOutline, listOutline } from 'ionicons/icons';
+
+export default defineComponent({
+  name: 'TabsPage',
+  components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, Tutorial },
+  setup() {
+    const settingsStore = useSettingsStore();
+    return {
+      moonOutline, 
+      sunnyOutline, 
+      listOutline,
+      settingsStore
+    }
+  }
+});
+</script>
+
 <template>
-  <ion-page>
+  <Tutorial v-if="settingsStore.isNew" />
+  <ion-page v-else>
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
@@ -21,21 +44,3 @@
     </ion-tabs>
   </ion-page>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import { moonOutline, sunnyOutline, listOutline } from 'ionicons/icons';
-
-export default defineComponent({
-  name: 'TabsPage',
-  components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet },
-  setup() {
-    return {
-      moonOutline, 
-      sunnyOutline, 
-      listOutline,
-    }
-  }
-});
-</script>
