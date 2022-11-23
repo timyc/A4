@@ -26,6 +26,7 @@
     https://ionicframework.com/docs/api/infinite-scroll
     https://stackoverflow.com/questions/46339827/ionic-3-ion-textarea-line-break-issue
     https://stackoverflow.com/questions/47173462/get-the-time-difference-between-two-times-in-format-hhmmss
+    https://github.com/sickcodes/Docker-OSX
 
 4. What classmates or other individuals did you consult as part of this assignment? What did you discuss?
 

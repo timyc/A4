@@ -45,11 +45,13 @@ export default defineComponent({
     this.updateHealthScore();
   },
   methods: {
+    // update the wheel every second
     incrementTimer() {
       this.timer = setInterval(() => {
         this.seconds++;
       }, 1000);
     },
+    // recalculate health score
     updateHealthScore() {
       if (this.settingsStore.overnightSleepData.length == 0) {
         this.healthScore = 100;
@@ -72,7 +74,7 @@ export default defineComponent({
       let seconds = sec - (hours * 3600) - (minutes * 60);
       return `${hours < 10 ? "0" + hours : hours}:${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
     },
-
+    // start the sleep counter
     startSleep() {
       if (this.settingsStore.sleepType == 1) {
           const wakeTime = (this.data as any).wakeTime.split(":");
@@ -91,9 +93,13 @@ export default defineComponent({
       this.state = 1;
       this.incrementTimer();
     },
+    // stop the sleep counter
     async stopSleep() {
       this.endTime = new Date();
       const sleepData = new OvernightSleepData(this.startTime, this.endTime);
+      if (this.seconds > this.goal) {
+        sleepData.goalMet = true;
+      }
       //this.settingsStore.addOvernightSleepData(data);
       const modal = await modalController.create({
         component: SleepResult,
@@ -111,6 +117,7 @@ export default defineComponent({
       this.seconds = 0;
       clearInterval(this.timer);
     },
+    // make the log modal appear
     async showLog(sleepData: any) {
       const modal = await modalController.create({
         component: LogInfo,

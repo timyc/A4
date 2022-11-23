@@ -5,6 +5,7 @@ export class OvernightSleepData extends SleepData {
 	private sleepEnd:Date;
 	private journal:string;
 	public identifier: string;
+	public goalMet:boolean;
 
 	constructor(sleepStart:Date, sleepEnd:Date) {
 		super();
@@ -12,6 +13,7 @@ export class OvernightSleepData extends SleepData {
 		this.sleepEnd = sleepEnd;
 		this.journal = "";
 		this.identifier = "OvernightSleepData";
+		this.goalMet = false;
 	}
 
 	summaryString():string {

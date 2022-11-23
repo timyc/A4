@@ -9,6 +9,7 @@ import {
     IonButton,
     IonItem,
     IonIcon,
+    IonBadge,
     modalController,
 } from '@ionic/vue';
 import { callOutline,logoTwitter } from 'ionicons/icons';
@@ -22,7 +23,7 @@ declare global {
 }
 export default defineComponent({
     name: 'LogInfo',
-    components: { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonItem, IonIcon },
+    components: { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonItem, IonIcon, IonBadge },
     setup() {
         const settingsStore = useSettingsStore();
         return {
@@ -104,6 +105,10 @@ export default defineComponent({
     <ion-content class="ion-padding">
         <h2>{{ (sleepObject as any).dateString() }}</h2>
         <span>{{ (sleepObject as any).summaryString() }}</span>
+        <div class="d-flex center" v-if="type == 1">
+            <ion-badge color="danger" v-if="!(sleepObject as any).goalMet">Goal Unmet</ion-badge>
+            <ion-badge color="success" v-else>Goal met</ion-badge>
+        </div>
         <ion-item v-if="(sleepObject as any).getJournal() != ''" style="white-space: pre-wrap;padding: 10px">
             {{ (sleepObject as any).getJournal() }}
         </ion-item>
