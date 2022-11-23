@@ -86,7 +86,6 @@ export default defineComponent({
           else {
             this.goal = differenceInSeconds(nd2, nd);
           }
-          console.log("Goal:",this.goal);
         }
       this.startTime = new Date();
       this.state = 1;
