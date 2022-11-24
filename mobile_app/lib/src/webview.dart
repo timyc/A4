@@ -52,13 +52,11 @@ class _WebViewStackState extends State<WebViewStack> {
                   //in Run/LogCat window of android studio
                   debugPrint(message.message);
                   final parsed = jsonDecode(message.message);
-                  if (parsed['command'] == 'tweet1') {
-                    SocialShare.shareTwitter("This is Social Share plugin");
+                  if (parsed['command'] == 'tweet1' || parsed['command'] == 'tweet2') {
+                    SocialShare.shareTwitter(parsed['content']);
                     setState(() {});
-                  } else if (parsed['command'] == 'votesdk') {
-                    svServer = parsed['params']['serverID'];
-                    svUser = parsed['params']['id'];
-                    svOpen = true;
+                  } else if (parsed['command'] == 'contact1' || parsed['command'] == 'contact2') {
+                    SocialShare.shareSms(parsed['content']);
                     setState(() {});
                   }
                 })

@@ -119,7 +119,7 @@ h2 {
   color: black;
 }
 .list-md {
-  background: lightgoldenrodyellow !important;
+  background: transparent !important;
 }
 ion-item {
   --background: lightgoldenrodyellow !important;
