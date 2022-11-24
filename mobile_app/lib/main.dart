@@ -9,6 +9,7 @@ Future<void> main() async {
   runApp(
     MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: const Color(0xFF000000)),
+      debugShowCheckedModeBanner: false,
       home: const WebViewApp(),
     ),
   );

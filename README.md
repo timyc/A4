@@ -45,7 +45,7 @@
 
 7. Did you design your app specifically for iOS or Android, or both?
 
-    Both initially, iOS after testing because Android's webview renders absolute-positioned elements in an awful way.
+    Both.
 
 8. How can a person log overnight sleep in your app? Why did you choose to support logging overnight sleep in this way?
 

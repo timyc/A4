@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:convert';
+import 'package:social_share/social_share.dart';
 import 'dart:io' show Platform;
 
 class WebViewStack extends StatefulWidget {
@@ -51,8 +52,8 @@ class _WebViewStackState extends State<WebViewStack> {
                   //in Run/LogCat window of android studio
                   debugPrint(message.message);
                   final parsed = jsonDecode(message.message);
-                  if (parsed['command'] == 'openAccMenu') {
-                    menuOpen = true;
+                  if (parsed['command'] == 'tweet1') {
+                    SocialShare.shareTwitter("This is Social Share plugin");
                     setState(() {});
                   } else if (parsed['command'] == 'votesdk') {
                     svServer = parsed['params']['serverID'];

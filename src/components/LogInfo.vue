@@ -55,9 +55,9 @@ export default defineComponent({
         shareTwitter() {
             if (window.Bridge) {
                 if (this.type == 1) {
-                    window.Bridge.postMessage(JSON.stringify({command: "tweet1"}));
+                    window.Bridge.postMessage(JSON.stringify({command: "tweet1", content: "I slept for " + (this.sleepObject as OvernightSleepData).summaryString()}));
                 } else if (this.type == 2) {
-                    window.Bridge.postMessage(JSON.stringify({command: "tweet2"}));
+                    window.Bridge.postMessage(JSON.stringify({command: "tweet2", content: "My sleepiness was " + (this.sleepObject as StanfordSleepinessData).summaryString()}));
                 }
             } else {
                 if (this.type == 1) {
@@ -70,9 +70,9 @@ export default defineComponent({
         shareContacts() {
             if (window.Bridge) {
                 if (this.type == 1) {
-                    window.Bridge.postMessage(JSON.stringify({command: "contact1"}));
+                    window.Bridge.postMessage(JSON.stringify({command: "contact1", content: "I slept for " + (this.sleepObject as OvernightSleepData).summaryString()}));
                 } else if (this.type == 2) {
-                    window.Bridge.postMessage(JSON.stringify({command: "contact2"}));
+                    window.Bridge.postMessage(JSON.stringify({command: "contact2", content: "My sleepiness was " + (this.sleepObject as StanfordSleepinessData).summaryString()}));
                 }
             } else {
                 window.alert("Not supported on this platform");
