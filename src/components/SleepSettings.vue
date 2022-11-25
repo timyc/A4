@@ -43,12 +43,12 @@ export default defineComponent({
         cancel() {
             return modalController.dismiss(null, 'cancel');
         },
-        confirm() {
+        async confirm() {
             if (this.age <= 0 || this.hours < 0 || this.minutes < 0) {
                 const alert = await alertController.create({
-                  header: 'Error',
-                  message: 'Invalid setting configurations',
-                  buttons: ['OK']
+                    header: 'Error',
+                    message: 'Please enter a valid age and sleep duration.',
+                    buttons: ['OK']
                 });
                 await alert.present();
                 return;
