@@ -15,6 +15,7 @@ import {
     IonCol,
     IonDatetime,
     IonIcon,
+    alertController,
     modalController,
 } from '@ionic/vue';
 import { swapHorizontalOutline } from 'ionicons/icons';
@@ -43,6 +44,15 @@ export default defineComponent({
             return modalController.dismiss(null, 'cancel');
         },
         confirm() {
+            if (this.age <= 0 || this.hours < 0 || this.minutes < 0) {
+                const alert = await alertController.create({
+                  header: 'Error',
+                  message: 'Invalid setting configurations',
+                  buttons: ['OK']
+                });
+                await alert.present();
+                return;
+            }
             this.settingsStore.wakeUpString = this.wakeTime;
             return modalController.dismiss({"age":this.age,"sleepyTime":(this.hours * 3600) + (this.minutes * 60),"wakeTime":format(parseISO(this.wakeTime), 'HH:mm')}, 'confirm');
         },
